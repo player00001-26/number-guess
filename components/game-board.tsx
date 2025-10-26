@@ -1,5 +1,14 @@
 "use client"
 
+if (typeof window !== "undefined") {
+  window.addEventListener("error", (e) => {
+    alert("⚠️ Client Error: " + e.message)
+  })
+  window.addEventListener("unhandledrejection", (e) => {
+    alert("⚠️ Promise Error: " + (e.reason?.message || e.reason))
+  })
+}
+
 import { Button } from "@/components/ui/button"
 
 interface SessionData {
@@ -19,7 +28,12 @@ export default function GameBoard({ selectedNumber, sessionData, onNumberSelect 
     <div className="grid grid-cols-10 gap-1 sm:gap-2">
       {numbers.map((num) => {
         const selectedData = sessionData?.numbers[num]
-        const selectedBy = selectedData && typeof selectedData === "object" ? selectedData.username : null
+        const selectedBy =
+  selectedData && typeof selectedData === "object" && "username" in selectedData
+    ? (selectedData as any).username
+    : typeof selectedData === "string"
+    ? selectedData
+    : null
         const isSelected = selectedNumber === num
         const isOtherUserSelected = selectedBy && selectedBy !== ""
 
