@@ -180,17 +180,14 @@ export default function GamePage() {
 
       if (userConfirmedNumber !== null) {
         setConfirmError("You have already selected a number in this session. You cannot change it.")
-        setTimeout(() => setConfirmError(""), 3000)
         return
       }
 
       const selectedData = sessionData.numbers[number]
-      const selectedBy = selectedData && typeof selectedData === "object" ? selectedData.username : null
-      const isAlreadySelected = selectedBy && selectedBy !== ""
+      const isAlreadySelected = selectedData && selectedData.username
 
       if (isAlreadySelected) {
         setConfirmError("Already selected - select another number")
-        setTimeout(() => setConfirmError(""), 3000)
         return
       }
 
@@ -206,8 +203,7 @@ export default function GamePage() {
 
     const userIdentifier = `${telegramUser.username || telegramUser.first_name}`
     const selectedData = sessionData.numbers[pendingNumber]
-    const selectedBy = selectedData && typeof selectedData === "object" ? selectedData.username : null
-    const isAlreadySelected = selectedBy && selectedBy !== ""
+    const isAlreadySelected = selectedData && selectedData.username
 
     if (isAlreadySelected) {
       setConfirmError("This number was just selected by another player. Please choose another.")
@@ -225,7 +221,7 @@ export default function GamePage() {
           sessionId,
           number: pendingNumber,
           username: userIdentifier,
-          userId: telegramUser.id,
+          userId: telegramUser.id, // Include user ID to track selections per user
         }),
       })
 
@@ -253,8 +249,8 @@ export default function GamePage() {
         })
       }
     } catch (error) {
-      console.error("[v0] Error confirming selection:", error)
-      setConfirmError("Failed to confirm selection. Please try again.")
+      console.error("Error confirming selection:", error)
+      setConfirmError("Failed to confirm selection")
     }
   }, [sessionData, telegramUser, pendingNumber, sessionId])
 
